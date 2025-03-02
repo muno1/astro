@@ -1,34 +1,47 @@
-"use client";
-
-import { useState } from "react";
-import Image from "next/image";
-import Item from "./item";
-import Link from "next/link";
+// pages/Home.js
+"use client"
+import { useState, useEffect } from "react";
+import Card from "./card";
+import ItemModal from "./itemModal";
 
 export default function Home() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(""); 
+  const [items, setItems] = useState([]); 
+  const [selectedItemId, setSelectedItemId] = useState(null); 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+
+  const handleCardClick = (id) => {
+    setSelectedItemId(id); 
+    setIsModalOpen(true); 
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); 
+    setSelectedItemId(null); 
+  };
+
+  const fetchItems = async () => {
+    if (!query) return; 
+
+    const response = await fetch(`https://images-api.nasa.gov/search?q=${query}`);
+    const data = await response.json();
+    setItems(data.collection?.items || []);
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, [query]); 
 
   return (
-    <>
-      <nav className="sticky top-0 z-50 bg-gradient-to-r from-blue-900 via-black to-blue-900 text-white shadow-md">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold tracking-wide">NASA Explorer</h1>
-          <ul className="flex space-x-6 text-lg">
-            <li>
-              <Link href="/dashboard" className="hover:text-gray-300 transition">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/home" className="hover:text-gray-300 transition">Home</Link>
-            </li>
-            <li>
-              <Link href="/profile" className="hover:text-gray-300 transition">Profile</Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+    <div className="bg-gray-100 min-h-screen">
 
-      <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-16 sm:p-20">
-        <form onSubmit={(e) => e.preventDefault()} className="flex gap-4">
+      <div className="p-6">
+        <h1 className="text-2xl font-bold mb-6 text-center">NASA Explorer</h1>
+
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="flex justify-center mb-6"
+        >
           <input
             type="text"
             value={query}
@@ -38,18 +51,28 @@ export default function Home() {
           />
         </form>
 
-        <main className="flex flex-col gap-8 items-center sm:items-start">
-          <Image
-            className="dark:invert"
-            src="/next.svg"
-            alt="Next.js logo"
-            width={180}
-            height={38}
-            priority
-          />
-          <Item query={query} />
-        </main>
+        {/* Display Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {items.map((item, index) => (
+            <Card
+              key={index}
+              title={item.data?.[0]?.title || "No Title"}
+              imageUrl={item.links?.[0]?.href || "https://via.placeholder.com/300"}
+              description={
+                item.data?.[0]?.description?.substring(0, 100) + "..." || "No description available."
+              }
+              id={item.data?.[0]?.nasa_id || "No ID"}
+              onCardClick={handleCardClick} 
+            />
+          ))}
+        </div>
+
+        <ItemModal
+          isOpen={isModalOpen}
+          closeModal={closeModal}
+          itemId={selectedItemId}
+        />
       </div>
-    </>
+    </div>
   );
 }

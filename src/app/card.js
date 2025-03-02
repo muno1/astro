@@ -1,26 +1,19 @@
-export function Card({ title, imageUrl, description }) {
-    return (
-        <div style={{ 
-            border: "1px solid #ddd", 
-            borderRadius: "8px", 
-            padding: "10px", 
-            textAlign: "center", 
-            boxShadow: "2px 2px 10px rgba(0,0,0,0.1)" 
-        }}>
-            <img 
-                src={imageUrl} 
-                alt={title} 
-                style={{ 
-                    width: "100%", 
-                    height: "200px", 
-                    objectFit: "cover", 
-                    borderRadius: "8px" 
-                }} 
-            />
-            <h3 style={{ fontSize: "1.1rem", margin: "10px 0" }}>{title}</h3>
-            <p style={{ fontSize: "0.9rem", color: "#555" }}>{description}</p>
-        </div>
-    );
+export function Card({ title, imageUrl, description, id, onCardClick }) {
+  return (
+    <div
+      className="border border-gray-300 rounded-lg p-4 text-center shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={() => onCardClick(id)} // Trigger the modal with the card id
+    >
+      <img
+        src={imageUrl}
+        alt={title}
+        className="w-full h-48 object-cover rounded-lg mb-4"
+      />
+      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      <p className="text-sm text-gray-600">{description}</p>
+    </div>
+  );
 }
 
 export default Card;
+
