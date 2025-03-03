@@ -2,7 +2,7 @@ export function Card({ title, imageUrl, description, id, onCardClick }) {
   return (
     <div
       className="border border-gray-300 rounded-lg p-4 text-center shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-      onClick={() => onCardClick(id)} // Trigger the modal with the card id
+      onClick={() => onCardClick(id)}
     >
       <img
         src={imageUrl}

@@ -5,7 +5,7 @@ export default function ItemModal({ isOpen, closeModal, itemId }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!itemId) return; // If no item id is provided, don't fetch data
+    if (!itemId) return;
 
     const fetchItemDetail = async () => {
       setLoading(true);
